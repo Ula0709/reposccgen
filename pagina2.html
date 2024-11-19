@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGeneral</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fefeff, #e5e7e9);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #004C97;
+            position: relative;
+        }
+        .logo {
+            width: 250px;
+            position: absolute;
+            top: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 60px;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            width: 400px; /* Ajustar el ancho de la caja */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            width: 100%; /* Para que ocupe todo el ancho disponible */
+        }
+        input[type="text"] {
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            padding: 15px;
+            font-size: 14px;
+            color: #32325d;
+            background-color: #f7f7f7;
+            box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #feb236;
+        }
+        .input-card {
+            flex: 1; /* Ocupa el espacio restante */
+            margin-right: 10px; /* Espacio entre campos */
+        }
+        .input-date-cvc {
+            display: flex; /* Flexbox para agrupar fecha y CVC */
+            width: 160px; /* Ancho combinado para fecha y CVC */
+            justify-content: space-between; /* Espacio entre fecha y CVC */
+        }
+        .input-date-cvc input {
+            width: 48%; /* Cada input ocupa casi la mitad del contenedor */
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #004C97;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #feb236;
+        }
+    </style>
+</head>
+<body>
+    <img src="logo-bg-2.svg" alt="Logo" class="logo">
+    <div class="container">
+        <h3>Ingresa los detalles de tu tarjeta</h3>
+        <div class="input-group">
+            <input type="text" class="input-card" id="card-number" placeholder="Número de tarjeta" required>
+            <div id="card-type" style="margin-left: 10px; font-weight: bold;"></div>
+            <div class="input-date-cvc">
+                <input type="text" placeholder="MM/AA" required>
+                <input type="text" placeholder="CVC" required>
+            </div>
+        </div>
+        <button id="submit">Confirmar</button>
+    </div>
+
+    <script>
+        document.getElementById('card-number').addEventListener('input', function () {
+            const cardNumber = this.value;
+            const cardType = document.getElementById('card-type');
+
+            // Expresiones regulares para Visa y MasterCard
+            const visaPattern = /^4[0-9]{12}(?:[0-9]{3})?$/; // Visa
+            const mastercardPattern = /^5[1-5][0-9]{14}$/; // MasterCard
+
+            if (visaPattern.test(cardNumber)) {
+                cardType.textContent = 'Visa';
+                cardType.style.color = '#004C97'; // Color para Visa
+            } else if (mastercardPattern.test(cardNumber)) {
+                cardType.textContent = 'MasterCard';
+                cardType.style.color = '#FFB700'; // Color para MasterCard
+            } else {
+                cardType.textContent = ''; // Si no es válida, limpiar el texto
+            }
+        });
+
+        document.getElementById('submit').addEventListener('click', function () {
+            const cardNumber = document.getElementById('card-number').value;
+            const visaPattern = /^4[0-9]{12}(?:[0-9]{3})?$/; // Visa
+            const mastercardPattern = /^5[1-5][0-9]{14}$/; // MasterCard
+
+            if (!visaPattern.test(cardNumber) && !mastercardPattern.test(cardNumber)) {
+                alert('Por favor, ingrese un número de tarjeta válido (Visa o MasterCard).');
+            } else {
+                alert('Detalles de la tarjeta confirmados');
+                // Aquí puedes agregar lógica para procesar los datos del formulario.
+            }
+        });
+    </script>
+</body>
+</html>

